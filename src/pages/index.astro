@@ -1,0 +1,361 @@
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF → CSV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+
+  <body class="min-h-screen flex flex-col" style="background:#09090b; color:#fafafa;">
+
+    <!-- Header -->
+    <header class="border-b" style="border-color:#27272a;">
+      <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#818cf8);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M3 2h7l3 3v9H3V2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M10 2v3h3" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M5 9h6M5 11.5h4" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold tracking-tight" style="color:#fafafa;">PDF → CSV</span>
+        </div>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-full" style="background:#18181b; color:#71717a; border:1px solid #27272a;">v1.0</span>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col items-center justify-center px-4 py-16">
+
+      <!-- Hero -->
+      <div class="text-center mb-12 animate-slide-up">
+        <div class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full mb-6" style="background:#18181b; color:#818cf8; border:1px solid #27272a;">
+          <span class="w-1.5 h-1.5 rounded-full" style="background:#6366f1;"></span>
+          Procesamiento 100% en el navegador · Sin servidor
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tighter leading-none mb-4" style="color:#fafafa;">
+          Convertí tu PDF<br/>
+          <span style="background:linear-gradient(90deg,#6366f1,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">a CSV al instante</span>
+        </h1>
+        <p class="text-base max-w-sm mx-auto" style="color:#71717a;">
+          Subí cualquier PDF con tablas o texto estructurado y descargá el CSV listo para usar.
+        </p>
+      </div>
+
+      <!-- Drop Zone -->
+      <div class="w-full max-w-2xl animate-slide-up" style="animation-delay:0.05s;">
+        <div
+          id="drop-zone"
+          class="relative rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer"
+          style="border-color:#27272a; background:#111113; min-height:220px;"
+        >
+          <input id="file-input" type="file" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" style="z-index:10;" />
+
+          <div id="drop-content" class="flex flex-col items-center justify-center gap-4 p-10 pointer-events-none">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-200" id="drop-icon" style="background:#18181b; border:1px solid #27272a;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-semibold mb-1" style="color:#fafafa;">Arrastrá tu PDF acá</p>
+              <p class="text-xs" style="color:#52525b;">o hacé click para seleccionar · Máx. 50MB</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing State -->
+      <div id="processing-card" class="hidden w-full max-w-2xl mt-6">
+        <div class="rounded-2xl p-6" style="background:#111113; border:1px solid #27272a;">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#18181b; border:1px solid #27272a;">
+              <svg class="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round">
+                <path d="M12 2a10 10 0 0 1 10 10"/>
+                <path d="M22 12a10 10 0 0 1-10 10" stroke="#27272a"/>
+                <path d="M2 12a10 10 0 0 1 10-10" stroke="#27272a"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold mb-0.5" style="color:#fafafa;" id="processing-filename">procesando...</p>
+              <p class="text-xs" style="color:#52525b;" id="processing-status">Leyendo páginas...</p>
+            </div>
+          </div>
+          <div class="w-full rounded-full overflow-hidden h-1.5" style="background:#27272a;">
+            <div id="progress-bar" class="h-full rounded-full transition-all duration-300" style="background:linear-gradient(90deg,#6366f1,#818cf8); width:0%;"></div>
+          </div>
+          <p class="text-xs mt-2" style="color:#3f3f46;" id="progress-text">0 / 0 páginas</p>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div id="result-card" class="hidden w-full max-w-6xl mt-6 animate-slide-up">
+        <div class="rounded-2xl overflow-hidden" style="border:1px solid #27272a;">
+
+          <!-- Result header -->
+          <div class="flex items-center justify-between px-5 py-4" style="background:#111113; border-bottom:1px solid #27272a;">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2);">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8l3.5 3.5L13 4" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold leading-none mb-0.5" style="color:#fafafa;" id="result-filename">output.csv</p>
+                <p class="text-xs" style="color:#52525b;" id="result-meta">— filas · — columnas</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btn-reset" class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors duration-150" style="color:#71717a; background:#18181b; border:1px solid #27272a;" onmouseover="this.style.color='#a1a1aa'" onmouseout="this.style.color='#71717a'">
+                Nuevo archivo
+              </button>
+              <button id="btn-download" class="text-xs px-3 py-1.5 rounded-lg font-semibold transition-all duration-150" style="color:#fafafa; background:#6366f1; border:1px solid #6366f1;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">
+                Descargar CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Table preview -->
+          <div class="overflow-auto" style="max-height:65vh; background:#0d0d0f;">
+            <table class="w-full text-sm border-collapse" id="preview-table">
+              <thead id="preview-head"></thead>
+              <tbody id="preview-body"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div id="error-card" class="hidden w-full max-w-2xl mt-6 animate-slide-up">
+        <div class="rounded-2xl px-5 py-4 flex items-center gap-3" style="background:#111113; border:1px solid rgba(239,68,68,0.3);">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(239,68,68,0.1);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="#ef4444" stroke-width="1.5"/>
+              <path d="M8 5v3.5M8 10.5v.5" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-semibold" style="color:#fafafa;">Error al procesar el PDF</p>
+            <p class="text-xs mt-0.5" style="color:#71717a;" id="error-message">Intentá con otro archivo.</p>
+          </div>
+          <button id="btn-retry" class="text-xs px-3 py-1.5 rounded-lg font-medium" style="color:#71717a; background:#18181b; border:1px solid #27272a;">
+            Reintentar
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center border-t" style="border-color:#18181b;">
+      <p class="text-xs" style="color:#3f3f46;">Tu PDF nunca sale del navegador · Código abierto</p>
+    </footer>
+
+  </body>
+</html>
+
+<script>
+  import { pdfToCSV } from '../scripts/pdf-to-csv';
+
+  // Catch any unhandled module errors
+  window.addEventListener('error', (e) => {
+    console.error('[RCM] global error:', e.message, e.error);
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[RCM] unhandled promise rejection:', e.reason);
+  });
+
+  const dropZone = document.getElementById('drop-zone')!;
+  const fileInput = document.getElementById('file-input') as HTMLInputElement;
+  const processingCard = document.getElementById('processing-card')!;
+  const resultCard = document.getElementById('result-card')!;
+  const errorCard = document.getElementById('error-card')!;
+
+  const progressBar = document.getElementById('progress-bar')!;
+  const progressText = document.getElementById('progress-text')!;
+  const processingFilename = document.getElementById('processing-filename')!;
+  const processingStatus = document.getElementById('processing-status')!;
+
+  const resultFilename = document.getElementById('result-filename')!;
+  const resultMeta = document.getElementById('result-meta')!;
+  const previewHead = document.getElementById('preview-head')!;
+  const previewBody = document.getElementById('preview-body')!;
+
+  const btnDownload = document.getElementById('btn-download')!;
+  const btnReset = document.getElementById('btn-reset')!;
+  const btnRetry = document.getElementById('btn-retry')!;
+  const errorMessage = document.getElementById('error-message')!;
+
+  let currentCSV = '';
+  let currentFilename = 'output.csv';
+
+  // Drag & drop visual feedback
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-active');
+    dropZone.style.borderColor = '#6366f1';
+    dropZone.style.background = 'rgba(99,102,241,0.05)';
+  });
+
+  ['dragleave', 'dragend'].forEach((ev) => {
+    dropZone.addEventListener(ev, () => {
+      dropZone.classList.remove('drag-active');
+      dropZone.style.borderColor = '#27272a';
+      dropZone.style.background = '#111113';
+    });
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-active');
+    dropZone.style.borderColor = '#27272a';
+    dropZone.style.background = '#111113';
+    const file = e.dataTransfer?.files[0];
+    if (file?.type === 'application/pdf' || file?.name.endsWith('.pdf')) {
+      processFile(file);
+    }
+  });
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files?.[0];
+    if (file) processFile(file);
+  });
+
+  btnDownload.addEventListener('click', () => {
+    const blob = new Blob([currentCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = currentFilename;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  [btnReset, btnRetry].forEach((btn) => {
+    btn.addEventListener('click', reset);
+  });
+
+  function reset() {
+    resultCard.classList.add('hidden');
+    errorCard.classList.add('hidden');
+    processingCard.classList.add('hidden');
+    dropZone.classList.remove('hidden');
+    fileInput.value = '';
+    currentCSV = '';
+  }
+
+  async function processFile(file: File) {
+    if (file.size > 50 * 1024 * 1024) {
+      showError('El archivo supera el límite de 50MB.');
+      return;
+    }
+
+    dropZone.classList.add('hidden');
+    resultCard.classList.add('hidden');
+    errorCard.classList.add('hidden');
+    processingCard.classList.remove('hidden');
+
+    processingFilename.textContent = file.name;
+    processingStatus.textContent = 'Leyendo documento...';
+    progressBar.style.width = '0%';
+    progressText.textContent = '0 / ? páginas';
+
+    try {
+      const result = await pdfToCSV(file, (page, total) => {
+        const pct = Math.round((page / total) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressText.textContent = `${page} / ${total} páginas`;
+        processingStatus.textContent = `Procesando página ${page} de ${total}...`;
+      });
+
+      currentCSV = result.csv;
+      currentFilename = result.filename;
+
+      processingCard.classList.add('hidden');
+      showResult(result.rows, result.filename);
+    } catch (err: unknown) {
+      processingCard.classList.add('hidden');
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      showError(msg);
+    }
+  }
+
+  function showResult(rows: string[][], filename: string) {
+    if (rows.length === 0) {
+      showError('No se encontró contenido en el PDF.');
+      return;
+    }
+
+    resultFilename.textContent = filename;
+    const cols = rows[0]?.length ?? 0;
+    resultMeta.textContent = `${rows.length} filas · ${cols} columnas`;
+
+    // Header row
+    previewHead.innerHTML = '';
+    if (rows[0]) {
+      const tr = document.createElement('tr');
+      rows[0].forEach((cell) => {
+        const th = document.createElement('th');
+        th.textContent = cell;
+        th.style.cssText = `
+          padding: 10px 16px; text-align: left; font-weight: 600;
+          color: #a1a1aa; background: #111113;
+          border-bottom: 1px solid #27272a; white-space: nowrap;
+          position: sticky; top: 0; z-index: 1; font-size: 0.8rem;
+        `;
+        tr.appendChild(th);
+      });
+      previewHead.appendChild(tr);
+    }
+
+    // Body rows (max 50 preview)
+    previewBody.innerHTML = '';
+    const previewRows = rows.slice(1, 51);
+    previewRows.forEach((row, i) => {
+      const tr = document.createElement('tr');
+      tr.style.background = i % 2 === 0 ? '#0d0d0f' : '#111113';
+      row.forEach((cell) => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        td.style.cssText = `
+          padding: 9px 16px; color: #d4d4d8;
+          border-bottom: 1px solid #1c1c1e; white-space: nowrap;
+          max-width: 320px; overflow: hidden; text-overflow: ellipsis;
+          font-size: 0.8rem;
+        `;
+        tr.appendChild(td);
+      });
+      previewBody.appendChild(tr);
+    });
+
+    if (rows.length > 51) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = rows[0]?.length ?? 1;
+      td.textContent = `+ ${rows.length - 51} filas más en el CSV descargado`;
+      td.style.cssText = 'padding: 8px 12px; color: #52525b; text-align: center; font-style: italic;';
+      tr.appendChild(td);
+      previewBody.appendChild(tr);
+    }
+
+    resultCard.classList.remove('hidden');
+  }
+
+  function showError(msg: string) {
+    errorMessage.textContent = msg;
+    dropZone.classList.remove('hidden');
+    errorCard.classList.remove('hidden');
+  }
+</script>

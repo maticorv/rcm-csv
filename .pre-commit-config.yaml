@@ -1,0 +1,40 @@
+repos:
+  # — Validaciones generales de archivos —
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(\.astro/|public/pdf\.worker\.mjs)
+      - id: end-of-file-fixer
+        exclude: ^(\.astro/|public/pdf\.worker\.mjs)
+      - id: check-yaml
+      - id: check-json
+        exclude: ^\.astro/
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]
+        exclude: ^public/pdf\.worker\.mjs$
+      - id: mixed-line-ending
+        args: [--fix=lf]
+        exclude: ^(\.astro/|public/pdf\.worker\.mjs)
+
+  # — Formato con Prettier (TypeScript, Astro, CSS, JSON, MD) —
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - prettier@3.5.3
+          - prettier-plugin-astro@0.14.1
+        files: \.(ts|css|json|md|yaml|yml|astro)$
+        exclude: ^(\.astro/|package-lock\.json)
+
+  # — Type check TypeScript (liviano, sin levantar servidor Astro) —
+  - repo: local
+    hooks:
+      - id: tsc
+        name: TypeScript type check
+        language: system
+        entry: npx tsc --noEmit
+        pass_filenames: false
+        files: \.ts$
