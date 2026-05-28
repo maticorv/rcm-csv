@@ -2,7 +2,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import Papa from "papaparse";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  import.meta.env.BASE_URL + "pdf.worker.mjs";
+  import.meta.env.BASE_URL.replace(/\/?$/, "/") + "pdf.worker.mjs";
 
 export interface ConversionResult {
   csv: string;
