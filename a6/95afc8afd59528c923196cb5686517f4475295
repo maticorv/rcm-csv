@@ -1,0 +1,19 @@
+src/scripts/pdf-to-csv.ts
+  s_0904d78f2f6595::t_a26334bb19a175 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a695afc8afd59528c923196cb5686517f4475295",
+  "prompts": {},
+  "sessions": {
+    "s_0904d78f2f6595": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e1aa711b-7b88-4339-8b05-ee47cebe47bb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Matias Corvalan <matias.corvalan@mercadolibre.com>"
+    }
+  }
+}
