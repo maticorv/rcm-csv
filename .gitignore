@@ -148,3 +148,6 @@ dist/
 
 # pdfjs worker (copied from node_modules at build time)
 public/pdf.worker.mjs
+
+# npm lockfile tiene URLs del registry interno de MeLi, no commitear
+package-lock.json

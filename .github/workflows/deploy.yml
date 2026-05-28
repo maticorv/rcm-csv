@@ -24,11 +24,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 24
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          rm -f package-lock.json
+          npm install
+        env:
+          npm_config_registry: https://registry.npmjs.org
 
       - name: Copy pdfjs worker to public
         run: cp node_modules/pdfjs-dist/build/pdf.worker.mjs public/pdf.worker.mjs
