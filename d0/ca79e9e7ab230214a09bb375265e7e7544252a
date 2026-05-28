@@ -1,0 +1,22 @@
+.gitignore
+  s_0904d78f2f6595::t_5eff9ddfe9199d 151-153
+.github/workflows/deploy.yml
+  s_0904d78f2f6595::t_0dd4635ee3a9dc 27
+  s_0904d78f2f6595::t_706f527613166e 30-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "d0ca79e9e7ab230214a09bb375265e7e7544252a",
+  "prompts": {},
+  "sessions": {
+    "s_0904d78f2f6595": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e1aa711b-7b88-4339-8b05-ee47cebe47bb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Matias Corvalan <matias.corvalan@mercadolibre.com>"
+    }
+  }
+}
