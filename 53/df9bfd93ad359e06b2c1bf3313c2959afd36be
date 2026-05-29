@@ -1,0 +1,26 @@
+src/pages/index.astro
+  s_0904d78f2f6595::t_e000b0cb3da11d 315,322-335,344,360,362,365
+  s_0904d78f2f6595::t_af0943745474a7 196
+  s_0904d78f2f6595::t_cf9fbf3fed727e 133-136,138
+  s_0904d78f2f6595::t_f871a3c83f057d 211
+  s_0904d78f2f6595::t_b0713fa1acf15d 63,65,78-90,93-105,108
+  s_0904d78f2f6595::t_2725459c831819 319
+  s_0904d78f2f6595::t_ae5077991e71f9 218
+  s_0904d78f2f6595::t_d87ada11664afc 262-307
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "53df9bfd93ad359e06b2c1bf3313c2959afd36be",
+  "prompts": {},
+  "sessions": {
+    "s_0904d78f2f6595": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e1aa711b-7b88-4339-8b05-ee47cebe47bb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Matias Corvalan <matias.corvalan@mercadolibre.com>"
+    }
+  }
+}
