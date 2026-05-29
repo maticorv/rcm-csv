@@ -34,7 +34,8 @@ const CSV_HEADERS = [
   "Hoj.Entr.",
   "Importe",
   "Moneda",
-  "Resumen / Producto",
+  "Resumen",
+  "Producto",
   "Período Inicio",
   "Período Fin",
   "Orden",
@@ -160,11 +161,15 @@ function extractColumns(
   // Moneda: 200 <= x < 230
   const moneda = row.find((i) => i.x >= 200 && i.x < 230)?.str ?? "";
 
-  // Resumen/Producto: 230 <= x < 465 — join all chunks in order
+  // Resumen / Producto: 230 <= x < 465 — join then split by " - "
   const resumenItems = row
     .filter((i) => i.x >= 230 && i.x < 465)
     .sort((a, b) => a.x - b.x);
-  const resumen = buildResumen(resumenItems);
+  const resumenRaw = buildResumen(resumenItems);
+  const dashIdx = resumenRaw.indexOf(" - ");
+  const resumen =
+    dashIdx !== -1 ? resumenRaw.slice(0, dashIdx).trim() : resumenRaw;
+  const producto = dashIdx !== -1 ? resumenRaw.slice(dashIdx + 3).trim() : "";
 
   // Período Inicio: 460 <= x < 530
   const periodoInicio = row.find((i) => i.x >= 460 && i.x < 530)?.str ?? "";
@@ -184,6 +189,7 @@ function extractColumns(
     importe,
     moneda,
     resumen,
+    producto,
     periodoInicio,
     periodoFin,
     orden,
