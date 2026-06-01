@@ -189,6 +189,7 @@ import '../styles/global.css';
 
 <script>
   import { pdfToCSV } from '../scripts/pdf-to-csv';
+  import * as XLSX from 'xlsx';
 
   // Catch any unhandled module errors
   window.addEventListener('error', (e) => {
@@ -271,45 +272,17 @@ import '../styles/global.css';
     const url = URL.createObjectURL(xlsBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = currentFilename.replace(/\.csv$/i, '.xls');
+    a.download = currentFilename.replace(/\.csv$/i, '.xlsx');
     a.click();
     URL.revokeObjectURL(url);
   });
 
   function rowsToExcel(rows: string[][]): Blob {
-    const esc = (v: string) =>
-      v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-    const xmlRows = rows.map((row, i) => {
-      const cells = row.map((cell) => {
-        const isNumber = i > 0 && /^-?[\d.]+(?:,\d+)*$/.test(cell.replace(/\./g, '').replace(',', '.'));
-        const type = isNumber ? 'Number' : 'String';
-        const val = isNumber ? cell.replace(/\./g, '').replace(',', '.') : esc(cell);
-        return `<Cell><Data ss:Type="${type}">${val}</Data></Cell>`;
-      }).join('');
-      return `<Row>${cells}</Row>`;
-    }).join('\n');
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-  xmlns:x="urn:schemas-microsoft-com:office:excel">
-  <Styles>
-    <Style ss:ID="header">
-      <Font ss:Bold="1"/>
-      <Interior ss:Color="#18181B" ss:Pattern="Solid"/>
-      <Font ss:Color="#A1A1AA" ss:Bold="1"/>
-    </Style>
-  </Styles>
-  <Worksheet ss:Name="RCM">
-    <Table>
-      ${xmlRows}
-    </Table>
-  </Worksheet>
-</Workbook>`;
-
-    return new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'RCM');
+    const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    return new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   }
 
   [btnReset, btnRetry].forEach((btn) => {
