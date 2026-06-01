@@ -1,0 +1,22 @@
+package.json
+  s_d25db9cfdef291::t_408c4bdfdba055 17-18
+src/pages/index.astro
+  s_d25db9cfdef291::t_0564234032de63 281-285
+  s_d25db9cfdef291::t_6b5c921796c9b6 192
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "bc2b00a5af6c0ff768d4914fac08211278341dad",
+  "prompts": {},
+  "sessions": {
+    "s_d25db9cfdef291": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "648e890a-65fe-42a6-9064-9e472dad29aa",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Matias Corvalan <matias.corvalan@mercadolibre.com>"
+    }
+  }
+}
